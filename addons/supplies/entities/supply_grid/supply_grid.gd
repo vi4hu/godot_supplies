@@ -15,6 +15,7 @@ var is_ready: bool = false
 func _ready() -> void:
 	is_ready = true
 	_setup()
+	fill_supplies()
 
 
 func _setup() -> void:
@@ -51,3 +52,7 @@ func _handle_grid_size(value: int) -> int:
 		_set_bg(value)
 		_setup_grid(value)
 	return value
+
+
+func fill_supplies() -> void:
+	print(SuppliesData.get_supplies())

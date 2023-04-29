@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqidrmbw2bs0j"]
+
+[ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="1_ybjmi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jv6y5"]
+size = Vector2(30, 30)
+
+[node name="Supply2D" type="Sprite2D" groups=["ingamesupply"]]
+modulate = Color(0.211765, 0.807843, 0.74902, 1)
+texture = ExtResource("1_ybjmi")
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Boundary" type="CollisionShape2D" parent="Area"]
+shape = SubResource("RectangleShape2D_jv6y5")

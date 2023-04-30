@@ -32,7 +32,7 @@ func _load_supplies() -> void:
 		var loaded_supplies = load(_save_path)
 		if loaded_supplies is Resource:
 			_supplies = loaded_supplies
-			emit_signal('supplies_loaded', loaded_supplies)
+			emit_signal('supplies_loaded', loaded_supplies.data)
 
 
 func _drop_supplies() -> void:

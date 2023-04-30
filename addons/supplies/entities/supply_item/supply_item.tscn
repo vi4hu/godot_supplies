@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="1_h7s4p"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xc2yu"]
-size = Vector2(30, 30)
+size = Vector2(32, 32)
 
 [node name="SupplyItem" type="Control" groups=["supplyitem"]]
 layout_mode = 3

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="2_fxv7d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wsayj"]
-size = Vector2(64, 64)
+size = Vector2(192, 192)
 
 [node name="SupplyGrid" type="Area2D" groups=["supplygrid"]]
 texture_filter = 1
@@ -12,12 +12,12 @@ texture_repeat = 2
 script = ExtResource("1_qvkt7")
 
 [node name="BG" type="ColorRect" parent="."]
-offset_right = 64.0
-offset_bottom = 64.0
+offset_right = 128.0
+offset_bottom = 128.0
 color = Color(0.3, 0.3, 0.3, 1)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(32, 32)
+position = Vector2(64, 64)
 shape = SubResource("RectangleShape2D_wsayj")
 
 [node name="Grid" type="Sprite2D" parent="."]
@@ -25,4 +25,4 @@ texture_repeat = 2
 texture = ExtResource("2_fxv7d")
 centered = false
 region_enabled = true
-region_rect = Rect2(0, 0, 64, 64)
+region_rect = Rect2(0, 0, 128, 128)

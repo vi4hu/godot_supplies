@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="1_h7s4p"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xc2yu"]
-size = Vector2(32, 32)
+size = Vector2(30, 30)
 
 [node name="SupplyItem" type="Control" groups=["supplyitem"]]
 layout_mode = 3
@@ -13,7 +13,7 @@ offset_right = 32.0
 offset_bottom = 32.0
 script = ExtResource("1_ca3fp")
 
-[node name="Item" type="Sprite2D" parent="." groups=["supplyitem"]]
+[node name="Item" type="Sprite2D" parent="."]
 modulate = Color(0.737255, 0, 0.384314, 1)
 texture = ExtResource("1_h7s4p")
 centered = false

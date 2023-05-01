@@ -21,6 +21,11 @@ func _ready() -> void:
 	initiate()
 
 
+func _input(event: InputEvent):
+	if event.is_action_pressed('save'):
+		SuppliesData.save(supply_items)
+
+
 func _setup() -> void:
 	_setup_collision(grid_dimension)
 	_set_bg(grid_dimension)
@@ -47,6 +52,7 @@ func _set_bg(value: Vector2) -> void:
 	bg.set_color(Color(0.3, 0.3, 0.3))
 	bg.set_position(Vector2.ZERO)
 	bg.set_size(Vector2((grid_size.x * value.x), (grid_size.y * value.y)))
+	bg.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
 
 
 func _handle_grid_size(value: Vector2) -> Vector2:
@@ -58,14 +64,15 @@ func _handle_grid_size(value: Vector2) -> Vector2:
 
 
 func fill_supplies() -> void:
-	print(SuppliesData.get_supplies())
+#	print(SuppliesData.get_supplies())
+	pass
 
 
 func initiate() -> void:
 	var supplyitems = get_tree().get_nodes_in_group('supplyitem')
 	for supplyitem in supplyitems:
-#		connect('area_entered', supplyitem.inside_inventory)
-#		connect('area_exited', supplyitem.outside_inventory)
+		connect('area_entered', supplyitem.inside_inventory)
+		connect('area_exited', supplyitem.outside_inventory)
 		supplyitem.initiate()
 
 
@@ -85,14 +92,16 @@ func add_item_to_inventory(supply: Control) -> bool:
 		return false
 #	print(slot_id, slot_size, supply_grid_pos, max_supply_grid_pos, min_slot_bounds, max_slot_bounds)
 		
-	if supply_items.has(supply):
-		remove_item_in_inventory_slot(supply, supply_items[supply])
+	if supply_items.has(supply.uuid):
+		remove_item_in_inventory_slot(supply, supply_items[supply.uuid].slot_id)
 
 	for y_ctr in range(slot_size.y):
 		for x_ctr in range(slot_size.x):
-			supply_slots[Vector2(slot_id.x + x_ctr, slot_id.y + y_ctr)] = supply
-
-	supply_items[supply] = slot_id
+			supply_slots[Vector2(slot_id.x + x_ctr, slot_id.y + y_ctr)] = supply.uuid
+	supply.slot_id = slot_id
+	supply_items[supply.uuid] = supply.get_data()
+	print(supply_items)
+#	print(supply_slots)
 	return true
 
 

@@ -2,7 +2,7 @@
 extends Control
 
 @export var supply_code: = 'Box'
-@export var grid_slot: = Vector2.ZERO
+@export var slot_id: = Vector2.ZERO
 @export var supply_img: Texture2D = preload("res://addons/supplies/resources/grid.png") :
 	set (value):
 		supply_img = _set_image(value)
@@ -25,6 +25,14 @@ func _ready() -> void:
 	isready = true
 
 
+func _data() -> Dictionary:
+	return {
+		'uuid': uuid,
+		'supply_code': supply_code,
+		'slot_id': {'x': slot_id.x, 'y': slot_id.y}
+	}
+
+
 func _process(delta) -> void:
 	if selected:
 		global_position = (
@@ -36,23 +44,6 @@ func _process(delta) -> void:
 		$Item.modulate = Color(0.4, 0, 0)
 	else:
 		$Item.modulate = Color(0, 0, 0)
-
-
-func put_as_supply() -> void:
-	SuppliesData.put_supply(
-		{
-			'uuid': uuid,
-			'supply_code': supply_code,
-			'grid_slot': grid_slot
-		}
-	)
-
-
-func load_info(data: Dictionary) -> void:
-	if data['uuid']:
-		uuid = data['uuid']
-		supply_code = data['supply_code']
-		grid_slot = data['grid_slot']
 
 
 func _set_image(value: Texture2D) -> Texture2D:
@@ -72,15 +63,32 @@ func _set_dimension(value: Vector2) -> Vector2:
 	return value
 
 
-func initiate():
+func initiate(data:Dictionary = {}) -> void:
+	if data:
+		load_info(data)
+	else:
+		uuid = Uuid.v4()
+ 
 	connect("gui_input", hover)
 	$Item/Area.connect("area_entered", overlapping_with_other_item)
 	$Item/Area.connect("area_exited", not_overlapping_with_other_item)
 
 
+func get_data() -> Dictionary:
+	return _data()
+
+
+func load_info(data: Dictionary) -> void:
+	if data['uuid']:
+		uuid = data['uuid']
+		supply_code = data['supply_code']
+		slot_id = data['slot_id']
+
+
 func inside_inventory(area: Area2D) -> void:
 	isinsidegrid = true
-	
+
+
 func outside_inventory(area: Area2D) -> void:
 	isinsidegrid = false
 
@@ -88,26 +96,21 @@ func outside_inventory(area: Area2D) -> void:
 func hover(event: InputEvent) -> void:
 	if event.is_action_pressed("select_item"):
 		selected = true
-#		bl_IsItemSelected = true
-#		ctrl_SelectedItem = ctrl_Item
 		$Item.set_z_index(1000)
 		old_position = global_position
-			
+	
 	if event.is_action_released("select_item"):
 		selected = false
-		$Item.set_z_index(0)
+		$Item.set_z_index(1)
 		if overlapping_supplies.size() > 0:
 			global_position = old_position
-#			ctrl_SelectedItem.get_node("Sprite2D").modulate = col_ValidColor
 		else:
 			if isinsidegrid: 
 				if !get_tree().get_first_node_in_group('supplygrid').add_item_to_inventory(self):
+					pass
 					global_position = old_position
 				else:
 					pass
-			
-#		bl_IsDraggingItem = false
-#		ctrl_SelectedItem = null
 
 
 func overlapping_with_other_item(area: Area2D) -> void:

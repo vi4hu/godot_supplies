@@ -29,7 +29,8 @@ func _data() -> Dictionary:
 	return {
 		'uuid': uuid,
 		'supply_code': supply_code,
-		'slot_id': {'x': slot_id.x, 'y': slot_id.y}
+		'slot_id': {'x': slot_id.x, 'y': slot_id.y},
+		'dimension': {'x': dimension.x, 'y': dimension.y}
 	}
 
 
@@ -43,7 +44,7 @@ func _process(delta) -> void:
 	if overlapping_supplies.size() > 0:
 		$Item.modulate = Color(0.4, 0, 0)
 	else:
-		$Item.modulate = Color(0, 0, 0)
+		$Item.modulate = Color(0.0, 0.0, 1)
 
 
 func _set_image(value: Texture2D) -> Texture2D:
@@ -63,18 +64,20 @@ func _set_dimension(value: Vector2) -> Vector2:
 	return value
 
 
-func initiate(data:Dictionary = {}) -> void:
+func initiate(data:Dictionary = {}) -> Dictionary:
 	if data:
 		load_info(data)
-		global_position = slot_id * 32#Vector2(data.slot_id.x * item_size.x, data.slot_id.y * item_size.y)
+		global_position = slot_id * item_size.x
 	else:
-		uuid = Uuid.v4()
+#		uuid = Uuid.v4()
+		return {}
 	if not is_connected('gui_input', hover):
 		connect("gui_input", hover)
 	if not $Item/Area.is_connected("area_entered", overlapping_with_other_item):
 		$Item/Area.connect("area_entered", overlapping_with_other_item)
 	if not $Item/Area.is_connected("area_exited", not_overlapping_with_other_item):
 		$Item/Area.connect("area_exited", not_overlapping_with_other_item)
+	return get_data()
 
 
 func get_data() -> Dictionary:
@@ -82,10 +85,13 @@ func get_data() -> Dictionary:
 
 
 func load_info(data: Dictionary) -> void:
-	if data['uuid']:
-		uuid = data['uuid']
-		supply_code = data['supply_code']
-		slot_id = data['slot_id']
+	if data.has('uuid'):
+		uuid = data.uuid
+	else:
+		uuid = Uuid.v4()
+	supply_code = data.supply_code
+	slot_id = Vector2(data.slot_id.x, data.slot_id.y)
+	dimension = Vector2(data.dimension.x, data.dimension.y)
 
 
 func inside_inventory(area: Area2D) -> void:
@@ -106,15 +112,13 @@ func hover(event: InputEvent) -> void:
 #		print(get_data())
 		selected = false
 		$Item.set_z_index(1)
-		if overlapping_supplies.size() > 0:
-			global_position = old_position
-		else:
-			if isinsidegrid: 
-				if !get_tree().get_first_node_in_group('supplygrid').add_item_to_inventory(self):
-					pass
-					global_position = old_position
-				else:
-					pass
+		if isinsidegrid: 
+			if overlapping_supplies.size() > 0:
+				global_position = old_position
+			if !get_tree().get_first_node_in_group('supplygrid').add_item_to_inventory(self):
+				global_position = old_position
+			else:
+				pass
 
 
 func overlapping_with_other_item(area: Area2D) -> void:

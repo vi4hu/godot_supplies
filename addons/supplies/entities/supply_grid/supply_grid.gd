@@ -8,7 +8,7 @@ extends Area2D
 @export var grid_dimension : Vector2 = Vector2(4, 4) :
 	set (value):
 		grid_dimension = _handle_grid_size(value)
-
+@export var bg_color: Color = Color(0.2, 0.2, 0.3)
 const grid_size : Vector2 = Vector2(32, 32)
 var is_ready: bool = false
 var supply_slots: Dictionary
@@ -19,15 +19,11 @@ func _ready() -> void:
 	is_ready = true
 	_setup()
 	fill_supplies()
-#	initiate()
+	initiate()
 
 
 func _input(event: InputEvent):
 	if event.is_action_pressed('save'):
-#		var serializable_supply_items = supply_items
-#		print(supply_items)
-#		for ssi in serializable_supply_items:
-#			serializable_supply_items[ssi].slot_id = parse_dict(serializable_supply_items[ssi].slot_id)
 		SuppliesData.save(supply_items)
 	if event.is_action_pressed('drop'):
 		SuppliesData.drop()
@@ -56,7 +52,7 @@ func _setup_collision(value: Vector2) -> void:
 
 
 func _set_bg(value: Vector2) -> void:
-	bg.set_color(Color(0.3, 0.3, 0.3))
+	bg.set_color(bg_color)
 	bg.set_position(Vector2.ZERO)
 	bg.set_size(Vector2((grid_size.x * value.x), (grid_size.y * value.y)))
 	bg.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
@@ -70,27 +66,42 @@ func _handle_grid_size(value: Vector2) -> Vector2:
 	return value
 
 
+func add_supply(supply_data: Dictionary) -> void:
+	var supply = load(test_path + supply_data.supply_code + '.tscn').instantiate()
+	var added_supply_data: Dictionary = supply.initiate(supply_data)
+	if added_supply_data.is_empty():
+		supply.queue_free()
+		return
+	
+	var supply_item_data = added_supply_data.duplicate()
+	supply_items[supply_item_data.uuid] = supply_item_data
+	
+	added_supply_data.slot_id = parse_vector(added_supply_data.slot_id)
+	for y_ctr in range(added_supply_data.dimension.y):
+		for x_ctr in range(added_supply_data.dimension.x):
+			supply_slots[
+				Vector2(added_supply_data.slot_id.x + x_ctr, added_supply_data.slot_id.y + y_ctr)
+			] = supply.uuid
+	connect('area_entered', supply.inside_inventory)
+	connect('area_exited', supply.outside_inventory)
+	add_child(supply)
+
+
 func fill_supplies() -> void:
 	var loaded_supplies = SuppliesData.get_supplies()
 	for supply_data in loaded_supplies.values():
-		var supply = load(test_path + supply_data.supply_code + '.tscn').instantiate()
-		var supply_item_data = supply_data.duplicate()
-		supply_items[supply_item_data.uuid] = supply_item_data
-		
-		supply_data.slot_id = parse_vector(supply_data.slot_id)
-		supply_slots[supply_data.slot_id] = supply_data.uuid
-		connect('area_entered', supply.inside_inventory)
-		connect('area_exited', supply.outside_inventory)
-		supply.initiate(supply_data)
-		add_child(supply)
+		add_supply(supply_data)
 #	print(">>>>>>>", supply_items,"<<<<<<<<<<", supply_slots)
 
 
 func initiate() -> void:
 	var supplyitems = get_tree().get_nodes_in_group('supplyitem')
+	print(supplyitems)
 	for supplyitem in supplyitems:
-		connect('area_entered', supplyitem.inside_inventory)
-		connect('area_exited', supplyitem.outside_inventory)
+		if not  is_connected("area_entered", supplyitem.inside_inventory):
+			connect('area_entered', supplyitem.inside_inventory)
+		if not is_connected('area_exited', supplyitem.outside_inventory):
+			connect('area_exited', supplyitem.outside_inventory)
 		supplyitem.initiate()
 
 
@@ -119,7 +130,7 @@ func add_item_to_inventory(supply: Control) -> bool:
 	supply.slot_id = slot_id
 	supply_items[supply.uuid] = supply.get_data()
 #	print(supply_items)
-#	print(supply_slots)
+	print(supply_slots)
 	return true
 
 
@@ -132,8 +143,37 @@ func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
 				supply_slots.erase(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr))
 
 
+func check_if_item_can_fit(x: int, y: int, m: Vector2) -> bool:
+	for gx in range(x, m.x):
+		for gy in range(y, m.y):
+			if supply_slots.keys().has(Vector2(gx, gy)):
+				return false
+	return true
+
+
+func add_new_item_to_inventory(data: Dictionary) -> bool:
+	# Note: need supply_code, supply_dimension
+	for dy in range(grid_dimension.y):
+		for dx in range(grid_dimension.x):
+			if Vector2(dx, dy) in supply_items.keys():
+				continue
+			var m = Vector2(dx + data.dimension.x, dy + data.dimension.y)
+			var can_fit = check_if_item_can_fit(
+				dx, dy, m
+			)
+			if m.x > grid_dimension.x or m.y > grid_dimension.y:
+				continue
+			if can_fit:
+				data['slot_id'] = {'x': dx, 'y': dy}
+				print(data.slot_id)
+				add_supply(data)
+				return true
+	return false
+
+
 func parse_vector(dict: Dictionary) -> Vector2:
 	return Vector2(dict.x, dict.y)
+
 
 func parse_dict(dict: Vector2) -> Dictionary:
 	return {'x': dict.x, 'y': dict.y}

@@ -14,6 +14,7 @@ const _save_path: String = "user://supplies.dat"
 func _ready() -> void:
 	set_process_mode(Node.PROCESS_MODE_ALWAYS)
 	_init_()
+#	drop()
 
 
 func _init_() -> void:

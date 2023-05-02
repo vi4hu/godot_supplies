@@ -14,7 +14,7 @@ offset_bottom = 32.0
 script = ExtResource("1_ca3fp")
 
 [node name="Item" type="Sprite2D" parent="."]
-modulate = Color(0, 0, 0, 1)
+modulate = Color(0, 0, 1, 1)
 texture = ExtResource("1_h7s4p")
 centered = false
 

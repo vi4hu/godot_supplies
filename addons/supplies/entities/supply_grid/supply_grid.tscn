@@ -10,14 +10,16 @@ size = Vector2(128, 128)
 texture_filter = 1
 texture_repeat = 2
 script = ExtResource("1_qvkt7")
+bg_color = Color(0.00392157, 0.137255, 0.219608, 1)
 
 [node name="BG" type="ColorRect" parent="."]
 offset_right = 128.0
 offset_bottom = 128.0
 mouse_filter = 2
-color = Color(0.3, 0.3, 0.3, 1)
+color = Color(0.00392157, 0.137255, 0.219608, 1)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(64, 64)
 shape = SubResource("RectangleShape2D_wsayj")
 

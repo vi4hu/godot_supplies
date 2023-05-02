@@ -15,7 +15,7 @@ const pixel_to_leave: Vector2 = Vector2(2, 2)
 
 var uuid: String
 var isready: bool = false
-var isinsidegrid: bool = false
+var isinsidegrid: bool = true
 var overlapping_supplies: Array = []
 var old_position
 var selected = false
@@ -94,12 +94,11 @@ func load_info(data: Dictionary) -> void:
 	dimension = Vector2(data.dimension.x, data.dimension.y)
 
 
-func inside_inventory(area: Area2D) -> void:
-	isinsidegrid = true
-
-
-func outside_inventory(area: Area2D) -> void:
-	isinsidegrid = false
+func is_inside() -> bool:
+	var grid = get_parent().grid_world_location
+	if global_position.x < grid[0].x or global_position.x > grid[1].x  or global_position.y < grid[0].y or global_position.y > grid[1].y:
+		return false
+	return true
 
 
 func hover(event: InputEvent) -> void:
@@ -109,16 +108,17 @@ func hover(event: InputEvent) -> void:
 		old_position = global_position
 	
 	if event.is_action_released("select_item"):
-#		print(get_data())
-		selected = false
 		$Item.set_z_index(1)
-		if isinsidegrid: 
+		if is_inside(): 
 			if overlapping_supplies.size() > 0:
 				global_position = old_position
 			if !get_tree().get_first_node_in_group('supplygrid').add_item_to_inventory(self):
-				global_position = old_position
-			else:
-				pass
+				get_tree().get_first_node_in_group('supplygrid').remove_item_in_inventory_slot(self, slot_id)
+				call_deferred('queue_free')
+		else:
+			get_tree().get_first_node_in_group('supplygrid').remove_item_in_inventory_slot(self, slot_id)
+			call_deferred('queue_free')
+		selected = false
 
 
 func overlapping_with_other_item(area: Area2D) -> void:

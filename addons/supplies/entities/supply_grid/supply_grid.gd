@@ -14,13 +14,16 @@ var is_ready: bool = false
 var supply_slots: Dictionary
 var supply_items: Dictionary
 var test_path = 'res://addons/supplies/entities/supply_item/'
+var grid_world_location: Array
+
 
 func _ready() -> void:
 	is_ready = true
 	_setup()
 	fill_supplies()
 	initiate()
-
+	grid_world_location.append(global_position)
+	grid_world_location.append(global_position+grid_dimension*grid_size)
 
 func _input(event: InputEvent):
 	if event.is_action_pressed('save'):
@@ -82,8 +85,6 @@ func add_supply(supply_data: Dictionary) -> void:
 			supply_slots[
 				Vector2(added_supply_data.slot_id.x + x_ctr, added_supply_data.slot_id.y + y_ctr)
 			] = supply.uuid
-	connect('area_entered', supply.inside_inventory)
-	connect('area_exited', supply.outside_inventory)
 	add_child(supply)
 
 
@@ -96,12 +97,7 @@ func fill_supplies() -> void:
 
 func initiate() -> void:
 	var supplyitems = get_tree().get_nodes_in_group('supplyitem')
-	print(supplyitems)
 	for supplyitem in supplyitems:
-		if not  is_connected("area_entered", supplyitem.inside_inventory):
-			connect('area_entered', supplyitem.inside_inventory)
-		if not is_connected('area_exited', supplyitem.outside_inventory):
-			connect('area_exited', supplyitem.outside_inventory)
 		supplyitem.initiate()
 
 
@@ -130,7 +126,7 @@ func add_item_to_inventory(supply: Control) -> bool:
 	supply.slot_id = slot_id
 	supply_items[supply.uuid] = supply.get_data()
 #	print(supply_items)
-	print(supply_slots)
+#	print(supply_slots)
 	return true
 
 
@@ -141,6 +137,7 @@ func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
 		for x_Ctr in range(slot_size.x):
 			if supply_slots.has(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr)):
 				supply_slots.erase(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr))
+	supply_items.erase(supply.uuid)
 
 
 func check_if_item_can_fit(x: int, y: int, m: Vector2) -> bool:
@@ -158,14 +155,14 @@ func add_new_item_to_inventory(data: Dictionary) -> bool:
 			if Vector2(dx, dy) in supply_items.keys():
 				continue
 			var m = Vector2(dx + data.dimension.x, dy + data.dimension.y)
+			if m.x > grid_dimension.x or m.y > grid_dimension.y:
+				continue
 			var can_fit = check_if_item_can_fit(
 				dx, dy, m
 			)
-			if m.x > grid_dimension.x or m.y > grid_dimension.y:
-				continue
 			if can_fit:
 				data['slot_id'] = {'x': dx, 'y': dy}
-				print(data.slot_id)
+#				print(data.slot_id)
 				add_supply(data)
 				return true
 	return false

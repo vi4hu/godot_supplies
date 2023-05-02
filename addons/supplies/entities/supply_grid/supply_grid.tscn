@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://i5j60tsm250m"]
+[gd_scene load_steps=4 format=3 uid="uid://dvdhlow67m3ks"]
 
 [ext_resource type="Script" path="res://addons/supplies/entities/supply_grid/supply_grid.gd" id="1_qvkt7"]
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="2_fxv7d"]

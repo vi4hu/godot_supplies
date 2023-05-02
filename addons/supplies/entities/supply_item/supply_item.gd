@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-@export var supply_code: = 'Box'
+@export var supply_code: = 'supply_item'
 @export var slot_id: = Vector2.ZERO
 @export var supply_img: Texture2D = preload("res://addons/supplies/resources/grid.png") :
 	set (value):
@@ -66,12 +66,15 @@ func _set_dimension(value: Vector2) -> Vector2:
 func initiate(data:Dictionary = {}) -> void:
 	if data:
 		load_info(data)
+		global_position = slot_id * 32#Vector2(data.slot_id.x * item_size.x, data.slot_id.y * item_size.y)
 	else:
 		uuid = Uuid.v4()
- 
-	connect("gui_input", hover)
-	$Item/Area.connect("area_entered", overlapping_with_other_item)
-	$Item/Area.connect("area_exited", not_overlapping_with_other_item)
+	if not is_connected('gui_input', hover):
+		connect("gui_input", hover)
+	if not $Item/Area.is_connected("area_entered", overlapping_with_other_item):
+		$Item/Area.connect("area_entered", overlapping_with_other_item)
+	if not $Item/Area.is_connected("area_exited", not_overlapping_with_other_item):
+		$Item/Area.connect("area_exited", not_overlapping_with_other_item)
 
 
 func get_data() -> Dictionary:
@@ -100,6 +103,7 @@ func hover(event: InputEvent) -> void:
 		old_position = global_position
 	
 	if event.is_action_released("select_item"):
+#		print(get_data())
 		selected = false
 		$Item.set_z_index(1)
 		if overlapping_supplies.size() > 0:

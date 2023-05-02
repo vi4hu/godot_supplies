@@ -13,17 +13,24 @@ const grid_size : Vector2 = Vector2(32, 32)
 var is_ready: bool = false
 var supply_slots: Dictionary
 var supply_items: Dictionary
+var test_path = 'res://addons/supplies/entities/supply_item/'
 
 func _ready() -> void:
 	is_ready = true
 	_setup()
 	fill_supplies()
-	initiate()
+#	initiate()
 
 
 func _input(event: InputEvent):
 	if event.is_action_pressed('save'):
+#		var serializable_supply_items = supply_items
+#		print(supply_items)
+#		for ssi in serializable_supply_items:
+#			serializable_supply_items[ssi].slot_id = parse_dict(serializable_supply_items[ssi].slot_id)
 		SuppliesData.save(supply_items)
+	if event.is_action_pressed('drop'):
+		SuppliesData.drop()
 
 
 func _setup() -> void:
@@ -64,8 +71,19 @@ func _handle_grid_size(value: Vector2) -> Vector2:
 
 
 func fill_supplies() -> void:
-#	print(SuppliesData.get_supplies())
-	pass
+	var loaded_supplies = SuppliesData.get_supplies()
+	for supply_data in loaded_supplies.values():
+		var supply = load(test_path + supply_data.supply_code + '.tscn').instantiate()
+		var supply_item_data = supply_data.duplicate()
+		supply_items[supply_item_data.uuid] = supply_item_data
+		
+		supply_data.slot_id = parse_vector(supply_data.slot_id)
+		supply_slots[supply_data.slot_id] = supply_data.uuid
+		connect('area_entered', supply.inside_inventory)
+		connect('area_exited', supply.outside_inventory)
+		supply.initiate(supply_data)
+		add_child(supply)
+#	print(">>>>>>>", supply_items,"<<<<<<<<<<", supply_slots)
 
 
 func initiate() -> void:
@@ -93,14 +111,14 @@ func add_item_to_inventory(supply: Control) -> bool:
 #	print(slot_id, slot_size, supply_grid_pos, max_supply_grid_pos, min_slot_bounds, max_slot_bounds)
 		
 	if supply_items.has(supply.uuid):
-		remove_item_in_inventory_slot(supply, supply_items[supply.uuid].slot_id)
+		remove_item_in_inventory_slot(supply, parse_vector(supply_items[supply.uuid].slot_id))
 
 	for y_ctr in range(slot_size.y):
 		for x_ctr in range(slot_size.x):
 			supply_slots[Vector2(slot_id.x + x_ctr, slot_id.y + y_ctr)] = supply.uuid
 	supply.slot_id = slot_id
 	supply_items[supply.uuid] = supply.get_data()
-	print(supply_items)
+#	print(supply_items)
 #	print(supply_slots)
 	return true
 
@@ -112,3 +130,10 @@ func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
 		for x_Ctr in range(slot_size.x):
 			if supply_slots.has(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr)):
 				supply_slots.erase(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr))
+
+
+func parse_vector(dict: Dictionary) -> Vector2:
+	return Vector2(dict.x, dict.y)
+
+func parse_dict(dict: Vector2) -> Dictionary:
+	return {'x': dict.x, 'y': dict.y}

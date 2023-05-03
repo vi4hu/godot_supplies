@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/supplies/entities/supply_item/supply_item.gd" id="1_ca3fp"]
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="1_h7s4p"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_xc2yu"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eko8e"]
 size = Vector2(30, 30)
 
 [node name="SupplyItem" type="Control" groups=["supplyitem"]]
@@ -22,4 +22,4 @@ centered = false
 
 [node name="Boundary" type="CollisionShape2D" parent="Item/Area"]
 position = Vector2(16, 16)
-shape = SubResource("RectangleShape2D_xc2yu")
+shape = SubResource("RectangleShape2D_eko8e")

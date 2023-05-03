@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://bmc11cttxai5l"]
+
+[ext_resource type="PackedScene" uid="uid://dvdhlow67m3ks" path="res://addons/supplies/entities/supply_grid/supply_grid.tscn" id="1_fwhgb"]
+[ext_resource type="PackedScene" uid="uid://c7w5gyl40swkt" path="res://addons/supplies/examples/gameitems/3232.tscn" id="2_hrigi"]
+[ext_resource type="PackedScene" uid="uid://dpmgwcefr8vjy" path="res://addons/supplies/examples/gameitems/6432.tscn" id="3_ihffj"]
+[ext_resource type="PackedScene" uid="uid://cgkg8cq7j82ac" path="res://addons/supplies/examples/gameitems/6464.tscn" id="4_uvxcy"]
+
+[node name="Example2D" type="Node2D"]
+
+[node name="Camera2d" type="Camera2D" parent="."]
+position = Vector2(197, 204)
+zoom = Vector2(4, 4)
+
+[node name="SupplyGrid" parent="." instance=ExtResource("1_fwhgb")]
+position = Vector2(64, 128)
+
+[node name="Supply2D" parent="." instance=ExtResource("2_hrigi")]
+position = Vector2(238, 159)
+
+[node name="Supply2D2" parent="." instance=ExtResource("3_ihffj")]
+position = Vector2(291, 187)
+
+[node name="Supply2D3" parent="." instance=ExtResource("4_uvxcy")]
+position = Vector2(244, 235)

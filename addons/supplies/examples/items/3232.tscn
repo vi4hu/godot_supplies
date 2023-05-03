@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmc6c1s33v3vt"]
+
+[ext_resource type="PackedScene" uid="uid://dbdvxrcaw8uhc" path="res://addons/supplies/entities/supply_item/supply_item.tscn" id="1_islh1"]
+[ext_resource type="Texture2D" uid="uid://djpvstfaux5ce" path="res://addons/supplies/resources/3232.png" id="2_siopr"]
+
+[node name="SupplyItem" instance=ExtResource("1_islh1")]
+supply_code = "3232"
+supply_img = ExtResource("2_siopr")
+
+[node name="Item" parent="." index="0"]
+texture = ExtResource("2_siopr")

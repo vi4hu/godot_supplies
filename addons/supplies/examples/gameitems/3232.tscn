@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7w5gyl40swkt"]
+
+[ext_resource type="PackedScene" uid="uid://cya0fhnjcxqqp" path="res://addons/supplies/entities/ingame_supply/supply2d.tscn" id="1_uhe2c"]
+[ext_resource type="Texture2D" uid="uid://djpvstfaux5ce" path="res://addons/supplies/resources/3232.png" id="2_thlja"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7dgj5"]
+size = Vector2(30, 30)
+
+[node name="Supply2D" instance=ExtResource("1_uhe2c")]
+modulate = Color(1, 1, 1, 1)
+texture = ExtResource("2_thlja")
+supply_code = "3232"
+
+[node name="Boundary" parent="Area" index="0"]
+shape = SubResource("RectangleShape2D_7dgj5")

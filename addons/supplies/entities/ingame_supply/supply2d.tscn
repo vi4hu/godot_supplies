@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://mo0l6pnl5wmw" path="res://addons/supplies/resources/grid.png" id="1_ybjmi"]
 [ext_resource type="Script" path="res://addons/supplies/entities/ingame_supply/supply2d.gd" id="2_2t0ib"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_jv6y5"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qayia"]
 size = Vector2(30, 30)
 
 [node name="Supply2D" type="Sprite2D" groups=["ingamesupply"]]
@@ -14,4 +14,4 @@ script = ExtResource("2_2t0ib")
 [node name="Area" type="Area2D" parent="."]
 
 [node name="Boundary" type="CollisionShape2D" parent="Area"]
-shape = SubResource("RectangleShape2D_jv6y5")
+shape = SubResource("RectangleShape2D_qayia")

@@ -13,7 +13,7 @@ const grid_size : Vector2 = Vector2(32, 32)
 var is_ready: bool = false
 var supply_slots: Dictionary
 var supply_items: Dictionary
-var test_path = 'res://addons/supplies/entities/supply_item/'
+var test_path = 'res://addons/supplies/examples/items/'
 var grid_world_location: Array
 
 
@@ -104,7 +104,7 @@ func initiate() -> void:
 func add_item_to_inventory(supply: Control) -> bool:
 	var supply_grid_pos = supply.global_position / grid_size
 	var slot_id: Vector2 = supply_grid_pos - global_position / grid_size
-	var slot_size: Vector2 = supply.size / grid_size
+	var slot_size: Vector2 = supply.dimension
 	
 	var max_supply_grid_pos: Vector2 = supply_grid_pos + slot_size - Vector2(1, 1)
 	var min_slot_bounds: Vector2 = global_position / grid_size - Vector2(1, 1)
@@ -119,19 +119,19 @@ func add_item_to_inventory(supply: Control) -> bool:
 		
 	if supply_items.has(supply.uuid):
 		remove_item_in_inventory_slot(supply, parse_vector(supply_items[supply.uuid].slot_id))
-
+	print(slot_size)
 	for y_ctr in range(slot_size.y):
 		for x_ctr in range(slot_size.x):
 			supply_slots[Vector2(slot_id.x + x_ctr, slot_id.y + y_ctr)] = supply.uuid
 	supply.slot_id = slot_id
 	supply_items[supply.uuid] = supply.get_data()
 #	print(supply_items)
-#	print(supply_slots)
+	print(supply_slots)
 	return true
 
 
 func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
-	var slot_size: Vector2 = supply.size / grid_size
+	var slot_size: Vector2 = supply.dimension
 
 	for y_Ctr in range(slot_size.y):
 		for x_Ctr in range(slot_size.x):
@@ -152,7 +152,7 @@ func add_new_item_to_inventory(data: Dictionary) -> bool:
 	# Note: need supply_code, supply_dimension
 	for dy in range(grid_dimension.y):
 		for dx in range(grid_dimension.x):
-			if Vector2(dx, dy) in supply_items.keys():
+			if Vector2(dx, dy) in supply_slots.keys():
 				continue
 			var m = Vector2(dx + data.dimension.x, dy + data.dimension.y)
 			if m.x > grid_dimension.x or m.y > grid_dimension.y:
@@ -162,7 +162,6 @@ func add_new_item_to_inventory(data: Dictionary) -> bool:
 			)
 			if can_fit:
 				data['slot_id'] = {'x': dx, 'y': dy}
-#				print(data.slot_id)
 				add_supply(data)
 				return true
 	return false

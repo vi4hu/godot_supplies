@@ -20,5 +20,6 @@ func get_data() -> Dictionary:
 
 
 func add() -> void:
-	get_tree().get_first_node_in_group('supplygrid').add_new_item_to_inventory(get_data())
-	call_deferred('queue_free')
+	var res = get_tree().get_first_node_in_group('supplygrid').add_new_item_to_inventory(get_data())
+	if res:
+		call_deferred('queue_free')

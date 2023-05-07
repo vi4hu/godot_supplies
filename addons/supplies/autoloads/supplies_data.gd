@@ -31,7 +31,7 @@ func _save_supplies() -> void:
 
 func _load_supplies() -> void:
 	var file = FileAccess.open(_save_path, FileAccess.READ)
-	print(file.get_as_text())
+#	print(file.get_as_text())
 	_supplies = JSON.parse_string(file.get_as_text())
 
 

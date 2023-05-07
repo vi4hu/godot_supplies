@@ -1,17 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://sxjbwmy1tia3"]
+[gd_scene load_steps=4 format=3 uid="uid://sxjbwmy1tia3"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_g4au2"]
-size = Vector3(0.2, 0.2, 0.1)
+[ext_resource type="Script" path="res://addons/supplies/entities/ingame_supply/supply3d.gd" id="1_uciim"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_u78cb"]
 size = Vector3(0.2, 0.2, 0.1)
 
-[node name="Supply3D" type="Node3D" groups=["supply"]]
+[sub_resource type="BoxMesh" id="BoxMesh_g4au2"]
+size = Vector3(0.2, 0.2, 0.1)
+
+[node name="Supply3D" type="RigidBody3D" groups=["supply"]]
+script = ExtResource("1_uciim")
+
+[node name="CollisionShape3d" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_u78cb")
 
 [node name="MeshInstance3d" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_g4au2")
-
-[node name="CharacterBody3d" type="CharacterBody3D" parent="MeshInstance3d"]
-
-[node name="CollisionShape3d" type="CollisionShape3D" parent="MeshInstance3d/CharacterBody3d"]
-shape = SubResource("BoxShape3D_u78cb")

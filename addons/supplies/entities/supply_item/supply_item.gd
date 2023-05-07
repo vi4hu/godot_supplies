@@ -1,3 +1,7 @@
+"""
+Credits:
+Some concepts from https://github.com/hamburgear/Godot-Action-RPG-Inventory
+"""
 @tool
 extends Control
 

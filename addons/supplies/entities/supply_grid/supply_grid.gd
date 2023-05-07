@@ -1,3 +1,7 @@
+"""
+Credits:
+Some concepts from https://github.com/hamburgear/Godot-Action-RPG-Inventory
+"""
 @tool
 extends Area2D
 
@@ -13,7 +17,8 @@ const grid_size : Vector2 = Vector2(32, 32)
 var is_ready: bool = false
 var supply_slots: Dictionary
 var supply_items: Dictionary
-var test_path = 'res://addons/supplies/examples/items/'
+var item_path = 'res://addons/supplies/examples/items/'
+var ingame_path = 'res://addons/supplies/examples/gameitems/'
 var grid_world_location: Array
 
 
@@ -25,11 +30,20 @@ func _ready() -> void:
 	grid_world_location.append(global_position)
 	grid_world_location.append(global_position+grid_dimension*grid_size)
 
+
 func _input(event: InputEvent):
 	if event.is_action_pressed('save'):
 		SuppliesData.save(supply_items)
 	if event.is_action_pressed('drop'):
 		SuppliesData.drop()
+
+	if event is InputEventKey and event.is_pressed():
+		print(event.unicode)
+		if event.unicode == 98:
+			if visible:
+				hide()
+			else:
+				show()
 
 
 func _setup() -> void:
@@ -70,7 +84,7 @@ func _handle_grid_size(value: Vector2) -> Vector2:
 
 
 func add_supply(supply_data: Dictionary) -> void:
-	var supply = load(test_path + supply_data.supply_code + '.tscn').instantiate()
+	var supply = load(item_path + supply_data.supply_code + '.tscn').instantiate()
 	var added_supply_data: Dictionary = supply.initiate(supply_data)
 	if added_supply_data.is_empty():
 		supply.queue_free()
@@ -126,11 +140,11 @@ func add_item_to_inventory(supply: Control) -> bool:
 	supply.slot_id = slot_id
 	supply_items[supply.uuid] = supply.get_data()
 #	print(supply_items)
-	print(supply_slots)
+#	print(supply_slots)
 	return true
 
 
-func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
+func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2, drop:bool=false):
 	var slot_size: Vector2 = supply.dimension
 
 	for y_Ctr in range(slot_size.y):
@@ -138,6 +152,10 @@ func remove_item_in_inventory_slot(supply: Control, existing_id: Vector2):
 			if supply_slots.has(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr)):
 				supply_slots.erase(Vector2(existing_id.x + x_Ctr, existing_id.y + y_Ctr))
 	supply_items.erase(supply.uuid)
+	if drop:
+		var dropped_supply = load(ingame_path + supply.supply_code + '.tscn').instantiate()
+		dropped_supply.global_position = get_parent().global_position
+		get_tree().get_root().add_child(dropped_supply)
 
 
 func check_if_item_can_fit(x: int, y: int, m: Vector2) -> bool:
